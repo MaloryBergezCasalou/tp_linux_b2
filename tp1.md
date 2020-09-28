@@ -604,5 +604,61 @@ public (active)
 prouver que node2 peut joindre les deux sites
 
 ```bash
+[user@node2 ~]$ curl -Lk node1.tp1.b2/site1
+<h1>Hello world 1</h1>
+[user@node2 ~]$ curl -Lk node1.tp1.b2/site2
+<h1>Hello world 2</h1>
+```
 
+## Script de sauvegarde
+
+mon script pas ouf
+
+```bash
+[user@node1 ~]$ cat tp1_backup.sh 
+#!/bin/bash
+
+# malorybergezcasalou
+# septembre/27/2020
+# script de backup site
+
+backup_time=$(date +%Y%m%d_%H%M%S)
+
+saved_folder_path=${1}
+
+saved_folder="${saved_folder_path##*/}"
+
+backup_name="${saved_folder}_${backup_time}"
+
+tar -czf $backup_name.tar.gz --absolute-names $saved_folder_path
+
+nbr_site1=`ls -l | grep -c site1_`
+nbr_site2=`ls -l | grep -c site2_`
+
+echo $nbr_site1
+echo $nbr_site2
+
+if [[ "$nbr_site1" > 7 ]] || [ "$nbr_site2" > 7 ]; 
+then
+        find . -maxdepth 1 -type f -user web -cmin +420 -exec rm {} \;
+	echo "ça marche"
+
+fi
+
+```
+
+## monitoring
+
+install de netdata
+```bash
+bash <(curl -Ss https://my-netdata.io/kickstart.sh)
+```
+
+
+conf avec discord
+
+```bash
+[user@node1 ~]$ sudo vim /etc/netdata/health_alarm_notify.conf
+[user@node1 ~]$ cat /etc/netdata/health_alarm_notify.conf 
+https://discordapp.com/api/webhooks/760167855407890433/2oSR09d1igU2bEHaFWjjxv3euzVcUHDqblPwTkpgxbygIxJ7W3BosLB17ya8X0fY9hgB
 ```
