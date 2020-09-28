@@ -650,10 +650,10 @@ fi
 ## monitoring
 
 install de netdata
+
 ```bash
 bash <(curl -Ss https://my-netdata.io/kickstart.sh)
 ```
-
 
 conf avec discord
 
