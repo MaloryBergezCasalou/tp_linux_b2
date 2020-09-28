@@ -536,7 +536,7 @@ install de nginx
 Complete!
 ```
 
-create user 'web'
+create user 'web' + conf sudo avec 'visudo'
 
 ```bash
 [user@node1 ~]$ sudo useradd web
@@ -594,6 +594,7 @@ public (active)
   source-ports:
   icmp-blocks:
   rich rules:
+
 ```
 
 prouver que node2 peut joindre les deux sites
