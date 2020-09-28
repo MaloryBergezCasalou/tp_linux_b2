@@ -578,23 +578,27 @@ les sites doivent être servis en HTTPS sur le port 443 et en HTTP sur le port 8
 success
 [user@node1 ~]$ sudo firewall-cmd --zone=public --add-service=https --permanent
 success
+[user@node1 ~]$ sudo firewall-cmd --add-port=80/tcp --permanent
+success
+[user@node1 ~]$ sudo firewall-cmd --add-port=443/tcp --permanent
+success
 [user@node1 ~]$ sudo firewall-cmd --reload
 success
 [user@node1 ~]$ sudo firewall-cmd --list-all
+[sudo] password for user: 
 public (active)
   target: default
   icmp-block-inversion: no
   interfaces: enp0s3 enp0s8
-  sources:
+  sources: 
   services: dhcpv6-client http https ssh
-  ports:
-  protocols:
+  ports: 80/tcp 443/tcp
+  protocols: 
   masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
   rich rules:
-
 ```
 
 prouver que node2 peut joindre les deux sites
