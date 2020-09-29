@@ -7,3 +7,8 @@
 ## 2. Re-Package
 
 [Partie 2](vagrant/tp2/part2)
+
+## 3. Multi-node deployment
+
+[Partie 3](vagrant/tp2/part3)
+
