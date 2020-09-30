@@ -12,3 +12,6 @@
 
 [Partie 3](vagrant/tp2/part3)
 
+## 4. Automation here we (slowly) come
+
+[Partie 4](vagrant/tp2/part4)
