@@ -1,4 +1,4 @@
-# TP3 Malory BERGEZ-CASALOU
+# TP3 Malory BERGEZ-CASALOU 
 
 ## 0 PRÉREQUIS
 [prerequis](vagarnt/tp3/prerequis)
@@ -9,7 +9,7 @@
 
 -afficher le nombre de services systemd dispos sur la machine
 ```bash
-systemctl list-unit-files --type=service | tail -1 | cut -d " " -f 1
+systemctl list-units --type=service | wc -l
 ```
 
 -afficher le nombre de services systemd actifs et en cours d'exécution ("running") sur la machine
@@ -66,7 +66,7 @@ ExecReload:commandes à executer pour le reload du service
 
 Description: description
 
-After:dependances du service
+After:configure l'ordre des dependances entre les unités
 
 -Listez tous les services qui contiennent la ligne WantedBy=multi-user.target
 
@@ -76,18 +76,63 @@ rien n'a été installé donc rien n'est disponible pour tous les users
 on cree un fichier servertp.service dans /etc/systemd/system/ et on met dedans :
 
 ```bash
-[vagrant@localhost system]$ cat servertp.service 
-[Unit]  
-Description=server b2 tp3
+[vagrant@node1 ~]$ sudo systemctl cat servertp
+# /etc/systemd/system/servertp.service
+[Unit]
+Description=server web tp3
+After=network.target
+Requires=firewalld.service
+
 [Service]
 Type=simple
-User=nginx
-Environment="PORT=80"
-ExecStartPre=+/usr/bin/firewalld --add-port=${PORT}/tcp
-ExecStart=/usr/bin/python3 -m http.server ${PORT}
-ExecReload=/bin/kill -HUP $MAINPID
-ExecStop=+/usr/bin/firewalld --remove-port=${PORT}/tcp
+Environment="PORT=8080"
+User=web
+ExecStartPre=/usr/bin/sudo /usr/bin/firewall-cmd --add-port=${PORT}/tcp
+ExecStart=/usr/bin/sudo /usr/bin/python3 -m http.server ${PORT}
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStopPost=/usr/bin/sudo /usr/bin/firewall-cmd --remove-port=${PORT}/tcp
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
+
+```
+
+je lance le service avec ```sudo systemctl start servertp.service```
+```bash
+[malory@x260 vagrant-tp3]$ curl 192.168.3.11:8080
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Directory listing for /</title>
+</head>
+<body>
+<h1>Directory listing for /</h1>
+<hr>
+<ul>
+<li><a href="bin/">bin@</a></li>
+<li><a href="boot/">boot/</a></li>
+<li><a href="dev/">dev/</a></li>
+<li><a href="etc/">etc/</a></li>
+<li><a href="home/">home/</a></li>
+<li><a href="lib/">lib@</a></li>
+<li><a href="lib64/">lib64@</a></li>
+<li><a href="media/">media/</a></li>
+<li><a href="mnt/">mnt/</a></li>
+<li><a href="opt/">opt/</a></li>
+<li><a href="proc/">proc/</a></li>
+<li><a href="root/">root/</a></li>
+<li><a href="run/">run/</a></li>
+<li><a href="sbin/">sbin@</a></li>
+<li><a href="srv/">srv/</a></li>
+<li><a href="swapfile">swapfile</a></li>
+<li><a href="sys/">sys/</a></li>
+<li><a href="tmp/">tmp/</a></li>
+<li><a href="usr/">usr/</a></li>
+<li><a href="var/">var/</a></li>
+</ul>
+<hr>
+</body>
+</html>
+
 ```
