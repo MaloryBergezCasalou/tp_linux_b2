@@ -1,0 +1,25 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos7-custom-tp3.box"
+
+  config.vbguest.auto_update = false
+  config.vm.box_check_update = false
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  config.vm.network "private_network", ip: "192.168.3.11"
+  config.vm.hostname = "node1.tp3.b2"
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.name = "b2-tp3-centos"
+  end
+
+  config.vm.provision "file", 
+    source: "scripts/backup.sh", 
+    destination: "/tmp/backup.sh"
+
+  config.vm.provision "file", 
+    source: "systemd/units/servertp.service", 
+    destination: "/tmp/servertp.service"
+
+  config.vm.provision "shell", path: "scripts/script_install.sh"
+end
