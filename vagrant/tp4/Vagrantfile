@@ -1,0 +1,62 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+
+  config.vbguest.auto_update = false
+  config.vm.box_check_update = false
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Gitea gitea
+  config.vm.define "gitea" do |gitea|
+    gitea.vm.network "private_network", ip: "192.168.4.11"
+    gitea.vm.hostname = "gitea.tp4.b2"
+  
+    gitea.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.name = "gitea.tp4.b2"
+    gitea.vm.provision "shell", path: "scripts/install-gitea.sh"
+    end
+  end
+    
+  # MariaDB db
+  config.vm.define "db" do |db|
+    db.vm.network "private_network", ip: "192.168.4.12"
+    db.vm.hostname = "db.tp4.b2"
+  
+    db.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.name = "db.tp4.b2"
+    end
+  end
+
+  # NGINX nginx
+  config.vm.define "nginx" do |nginx|
+    nginx.vm.network "private_network", ip: "192.168.4.13"
+    nginx.vm.hostname = "nginx.tp4.b2"
+    
+    nginx.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.name = "nginx.tp4.b2"
+
+    nginx.vm.provision "file",
+      source: "conf/nginx.conf", 
+      destination: "/tmp/nginx.conf"
+    nginx.vm.provision "shell", inline: "cp /tmp/nginx.conf /etc/nginx/nginx.conf"
+    end
+  end
+
+    # NFS nfs
+    config.vm.define "nfs" do |nfs|
+      nfs.vm.network "private_network", ip: "192.168.4.14"
+      nfs.vm.hostname = "nfs.tp4.b2"
+    
+      nfs.vm.provider "virtualbox" do |v|
+        v.memory = 512
+        v.name = "nfs.tp4.b2"
+    
+    end
+  end
+    # Backup
+    #gitea.vm.provision "file", 
+    #  source: "scripts/backup.sh", 
+    #  destination: "/tmp/backup.sh"
+end
